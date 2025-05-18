@@ -122,39 +122,36 @@ document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.getElementById('contactForm');
     
     if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
+        contactForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Get form values
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-            const message = document.getElementById('message').value;
-            
-            // Basic form validation
-            if (!name || !email || !phone || !message) {
-                alert('אנא מלא את כל השדות');
-                return;
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                message: document.getElementById('message').value
+            };
+
+            try {
+                console.log('שולח נתונים:', formData);
+                const response = await fetch('https://script.google.com/macros/s/AKfycbym_hA3HpxC828ChaPRVT4ki020f6LkvJJG7cpi0-DrF-R2SvdpCq-dgBF5mGfHK6dR/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                console.log('תגובה מהשרת:', response);
+                
+                alert('ההודעה נשלחה בהצלחה!');
+                document.getElementById('contactForm').reset();
+                
+            } catch (error) {
+                console.error('שגיאה מפורטת:', error);
+                alert('אירעה שגיאה בשליחת ההודעה. אנא נסה שוב מאוחר יותר.');
             }
-            
-            // Email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('אנא הכנס כתובת אימייל תקינה');
-                return;
-            }
-            
-            // Phone validation - Israeli format
-            const phoneRegex = /^0[2-9]\d{7,8}$/;
-            if (!phoneRegex.test(phone)) {
-                alert('אנא הכנס מספר טלפון תקין');
-                return;
-            }
-            
-            // In a real-world scenario, here you would send the form data to a server
-            // For this demo, we'll just show a success message
-            alert('תודה על פנייתך! נחזור אליך בהקדם.');
-            contactForm.reset();
         });
     }
 }); 
